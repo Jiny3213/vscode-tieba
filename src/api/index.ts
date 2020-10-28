@@ -62,7 +62,7 @@ export function getPostList() {
     interface PostItem {
       text: string,
       author: string,
-      pid: string,
+      pid: string, // postid
       imageList: string[],
       commentList?: any[]
     }
@@ -112,16 +112,14 @@ export function getCommentList() {
   })
 }
 
-// console.log('测试api')
-// getOneTopic()
-// getOneTopicComment()
-// async function testTieba() {
-//   const postList = await getPostList()
-//   const commentList = await getCommentList()
-//   for(let [k, v] of Object.entries(commentList)) {
-//     let targetPost = postList.find(item => item.pid === k)
-//     targetPost!.commentList = v['comment_info']
-//   }
-//   console.log(postList)
-// }
-// testTieba()
+console.log('测试api')
+async function testTieba() {
+  const postList = await getPostList()
+  const commentList = await getCommentList()
+  for(let [k, v] of Object.entries(commentList)) {
+    let targetPost = postList.find(item => item.pid === k)
+    targetPost!.commentList = v['comment_info']
+  }
+  console.log(postList)
+}
+testTieba()
