@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <title>titie</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      ul, li {
+        list-style: none;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      img {
+        display: block;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      .title {
+        font-size: 14px;
+        color: #85856a;
+        line-height: 2em;
+        font-weight: normal;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .img-container {
+        height: 100px;
+        width: 100px;
+        margin-right: 20px;
+        background-position: center center;
+        background-size: cover;
+        display: inline-block;
+        margin-right: 20px;
+      }
+      
+    </style>
+    <script src="node_modules/vue/dist/vue.global.js"></script>
+    <script src="out/utils/message.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <input type="text" v-model="baName">
+      <button @click="getIndexPage">获取首页信息{{name}}</button>
+      <ul v-if="dataList.length">
+        <li v-for="(item, index) in dataList" :key="item.title">
+          <h2 class="title">{{index}} <a :href="item.href" :title="item.href">{{item.title}}</a></h2>
+          <!-- <div class="img-container"  
+               v-for="img in item.images" :key="img"
+               :style="{backgroundImage: `url('${img}')`}">
+          </div> -->
+        </li>
+      </ul>
+    </div>
+    <script>
+      // 无法解决ts引用问题, 只能用js, 直接写在html里好了
+      const app = {
+        data() {
+          return {
+            name: 'jin',
+            baName: '',
+            dataList: []
+          }
+        },
+        methods: {
+          getIndexPage() {
+            callVscode('getIndexPage', {baName: this.baName || undefined}).then(res => {
+              this.dataList = res
+            })
+          }
+        },
+        created() {
+          this.getIndexPage()
+        }
+    }
+    Vue.createApp(app).mount('#app')
+    </script>
+  </body>
+</html>

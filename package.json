@@ -1,0 +1,124 @@
+{
+	"name": "vscode-tieba",
+	"publisher": "Jiny3213",
+	"displayName": "vscode-tieba",
+	"description": "用vscode上贴吧",
+	"keywords": [
+		"tieba"
+	],
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.50.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:tieba.thread",
+		"onCommand:tieba.post",
+		"onView:tieba-index"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "tieba.thread",
+				"title": "帖子列表",
+				"icon": "img/tieba.png"
+			},
+			{
+				"command": "tieba.post",
+				"title": "帖子详情",
+				"icon": "img/tieba.png"
+			},
+			{
+				"command": "tieba-index.refresh",
+				"title": "刷新",
+				"icon": "img/refresh.svg"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "editorFocus",
+					"command": "tieba.thread",
+					"group": "navigation"
+				},
+				{
+					"when": "editorFocus",
+					"command": "tieba.post",
+					"group": "navigation"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "tieba.thread",
+					"group": "navigation"
+				},
+				{
+					"command": "tieba.post",
+					"group": "navigation"
+				}
+			],
+			"view/title": [
+				
+			],
+			"view/item/context": [
+				{
+					"command": "tieba-index.refresh",
+					"when": "view == tieba-index && viewItem == 1",
+					"group": "inline"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "tieba",
+					"title": "tieba",
+					"icon": "img/tieba.svg"
+				}
+			]
+		},
+		"views": {
+			"tieba": [
+				{
+					"id": "tieba-index",
+					"name": "首页"
+				},
+				{
+					"id": "tieba-other",
+					"name": "其他"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.50.0",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.0",
+		"@types/node": "^12.11.7",
+		"eslint": "^7.9.0",
+		"@typescript-eslint/eslint-plugin": "^4.1.1",
+		"@typescript-eslint/parser": "^4.1.1",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"typescript": "^4.0.2",
+		"vscode-test": "^1.4.0",
+		"@types/cheerio": "^0.22.22",
+		"ts-node": "^9.0.0"
+	},
+	"dependencies": {
+		"axios": "^0.20.0",
+		"cheerio": "^1.0.0-rc.3",
+		"vue": "^3.0.1"
+	}
+}

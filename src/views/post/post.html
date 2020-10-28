@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>帖子详情</title>
+  <script src="node_modules/vue/dist/vue.global.js"></script>
+  <script src="out/utils/message.js"></script>
+</head>
+<body>
+  <div id="app">{{name}}</div>
+  <script>
+    const app = {
+      data() {
+        return {
+          name: 'jin'
+        }
+      }
+    }
+    Vue.createApp(app).mount('#app')
+  </script>
+</body>
+</html>
