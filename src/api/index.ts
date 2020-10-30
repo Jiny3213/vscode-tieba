@@ -1,6 +1,11 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import * as fs from 'fs'
+interface ThreadItem {
+  title: string, // 帖子的标题
+  href: string, // 帖子的链接
+  images: Array<string> // 帖子的图
+}
 
 // 获取某个吧的帖子
 export function getThreadList(keyword: string = '高达模型'):Promise<ThreadItem[]> {
@@ -11,20 +16,18 @@ export function getThreadList(keyword: string = '高达模型'):Promise<ThreadIt
       'ie': 'utf-8',
       'pn': '0', // 页数 50 的倍数, 0是第一页
       'pagelets': 'frs-list/pagelet/thread',
-      "pagelets_stamp": '1602726575670'
+      "pagelets_stamp": new Date().getTime() // 时间戳
     },
   }).then(res => {
-    const html:string = res.data
-    const re:RegExp = /Bigpipe.register\("frs-list\/pagelet\/thread_list", {"content":(".*"),"parent"/
+    const html: string = res.data
+    const re = /Bigpipe.register\("frs-list\/pagelet\/thread_list", {"content":(".*"),"parent"/
     const str = JSON.parse(html.match(re)![1])
     const $ = cheerio.load(str)
-    
-    
-    let result: Array<ThreadItem> = []
+
+    let threadList: ThreadItem[] = []
     $('.j_thread_list').each(function (index, item) {
       const title = $(item).find('a.j_th_tit')
-      // console.log(index, title.text(), 'https://tieba.baidu.com' + title.attr('href'))
-      result.push({
+      threadList.push({
         title: title.text(),
         href: 'https://tieba.baidu.com' + title.attr('href')!,
         images: []
@@ -32,49 +35,49 @@ export function getThreadList(keyword: string = '高达模型'):Promise<ThreadIt
       const images = $(item).find('.threadlist_media img')
       if(images.length) {
         images.each(function(imgIndex:number, item) {
-          // console.log(`图${imgIndex + 1}`, $(item).attr('bpic'))
-          result[index].images.push($(item).attr('bpic')!)
+          threadList[index].images.push($(item).attr('bpic')!)
         })
       }
     })
-    return result
+    return threadList
   })
 }
 
+export interface PostItem {
+  text: string, // 文字内容
+  author: string, // 作者
+  pid: string, // postid, 用于对应评论
+  imageList: string[], // 图片列表
+  commentList?: any[] // 评论
+}
 
 // 获取一个帖子的内容
-export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1) {
+export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1): Promise<PostItem[]> {
+  console.log('开始获取post')
   return axios.get(url, {
     params: {
       pn: page, // 第一页: 1
       ajax: 1,
       t: new Date().getTime()
     }
-  }).then(res => {
+  }).then( async res => {
+    console.log('post已返回')
     const html = res.data
     const $ = cheerio.load(html)
-    // fs.writeFileSync('./test.html', html)
-    // 评论人非常复杂, 稍后处理
-    interface commentItem {
-      content: string, // 评论内容
-      username: string, // 评论人 可能是null, 实际人名可能不是这个, 没有的时候是userlist中的nickname
-      user_id: number, // 评论人是谁不重要, 知道id就好
-    }
-
-    interface PostItem {
-      text: string,
-      author: string,
-      pid: string, // postid
-      imageList: string[],
-      commentList?: any[]
-    }
    
     let postList: PostItem[] = []
+    let forumId: string // 吧id
     $('.l_post').each((index, item) => {
       // 去除广告
       if($(item).attr('ad-dom-img') === 'true') {
         return
       }
+
+      // 获取吧id, 用于获取评论
+      if(!forumId) {
+        forumId = JSON.parse($(item).attr('data-field')!).content.forum_id
+      }
+
       let author = $(item).find('.d_name a').text()
       let text = $(item).find('.d_post_content').text().trim()
       let pid = $(item).attr('data-pid')!
@@ -82,7 +85,6 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
       const images = $(item).find('.d_post_content img')
       if(images.length) {
         images.each((index, item) => {
-          // console.log(`图${index+1}, ${$(item).attr('src')}`)
           imageList.push($(item).attr('src')!)
         })
       }
@@ -93,39 +95,69 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         pid
       })
     })
-    console.log('post获取成功', postList)
+    console.log('postlist 处理完毕, 开始获取comment')
+    const tid = url.match(/\/(\d*)$/)![1]
+    const commentList = await getCommentList(tid, forumId!)
+    // 把评论塞到postlist
+    if(Object.keys(commentList).length) {
+      for(let [k, v] of Object.entries(commentList)) {
+        let targetPost = postList.find(item => item.pid === k)
+        targetPost!.commentList = v['comment_info']
+      }
+    }
     return postList
-  }).catch(err => {
-    console.error('网络错误', err)
   })
 }
 
+// 评论信息
+interface CommentObj {
+  [propName: number]: CommentItem
+}
+interface CommentItem {
+  comment_num: number,
+  comment_list_num: number,
+  comment_info: CommentInfo[]
+}
+interface CommentInfo {
+  content: string, // 评论内容
+  user_id: number, // 评论人id
+  username: string, // 后期塞进去的用户昵称
+  [propName: string]: any // 其他内容
+}
+// 用户信息
+interface UserObj {
+  [propName: number]: UserItem
+}
+interface UserItem {
+  user_name?: string,
+  user_nickname?: string 
+  nickname: string, // 这个是真正用于展示的用户名
+  display_name: string,
+  ala_info?: { // 位置信息
+    show_name: string
+  },
+  user_id: number // 用户id
+}
 // 获取一个帖子中的所有贴中评论
-export function getCommentList() {
+export function getCommentList(tid: string, fid: string): Promise<CommentObj> {
   return axios.get('https://tieba.baidu.com/p/totalComment', {
     params: {
       t: 1603354967850,
-      tid: 7029367562,
-      fid: 1363635,
+      tid: tid, // thread id
+      fid: fid, // forum_id 论坛id 暂时只能在post列表中获取, 1363635
       pn: 1,
       'see_lz': 0
     }
   }).then(res => {
-    // console.log(res.data.data.comment_list)
-    let commentList: any[] = res.data.data.comment_list
+    console.log('comment已返回')
+    let commentList: CommentObj = res.data.data.comment_list
+    let userList: UserObj = res.data.data.user_list
+    for(let item of Object.values(commentList)) {
+      (item as CommentItem).comment_info.forEach(commentInfo => {
+        commentInfo.username = userList[commentInfo.user_id].nickname
+      })
+    }
+    console.log('comment处理完毕')
     return commentList
   })
 }
-
-// console.log('测试api')
-// async function testTieba() {
-//   const postList = await getPostList()
-//   const commentList = await getCommentList()
-//   for(let [k, v] of Object.entries(commentList)) {
-//     let targetPost = postList.find(item => item.pid === k)
-//     targetPost!.commentList = v['comment_info']
-//   }
-//   console.log(postList)
-// }
-// testTieba()
-// getPostList()

@@ -16,6 +16,13 @@
         <div v-if="item.imageList.length">
           <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src">
         </div>
+        <div v-if="item.commentList && item.commentList.length">
+          <div>评论:</div>
+          <div v-for="comment in item.commentList" :key="comment['comment_id']">
+            <span>{{comment.username}}: </span>
+            <span v-html="comment.content"></span>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -50,6 +57,10 @@
       max-width: 200px;
       opacity: 0.3;
       margin-right: 20px;
+    }
+    /* 评论中的表情 */
+    img {
+      opacity: 0.3;
     }
   </style>
 </body>
