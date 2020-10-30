@@ -4,10 +4,10 @@ import {getPostList} from '../api/index'
 
 // 展示某个帖子
 export function openPostView(context: vscode.ExtensionContext) {
-  return vscode.commands.registerCommand('tieba.openPostView', async url => {
+  return vscode.commands.registerCommand('tieba.openPostView', async (thread: ThreadItem) => {
     const panel = vscode.window.createWebviewPanel(
       'post',
-      '帖子详情',
+      thread.title,
       vscode.ViewColumn.One,
       {
         enableScripts: true,
@@ -20,7 +20,7 @@ export function openPostView(context: vscode.ExtensionContext) {
         return Promise.resolve('had call sayHello')
       },
       getPostList(message) {
-        return getPostList(url)
+        return getPostList(thread.href)
       }
     }
     panel.webview.html = getWebViewContent(context, panel, 'src/views/post/post.html')

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>帖子详情</title>
+  <title></title>
   <script src="node_modules/vue/dist/vue.global.js"></script>
   <script src="out/utils/message.js"></script>
 </head>
@@ -28,12 +28,11 @@
           postList: []
         }
       },
-      created() {
-        callVscode('getPostList').then(res => {
-          console.log(res)
+      async created() {
+        await callVscode('getPostList').then(res => {
           this.postList = res
         })
-
+        document.title = this.postList[0].text
       }
     }
     Vue.createApp(app).mount('#app')
@@ -41,6 +40,7 @@
   <style>
     body {
       color: #d4d4d4;
+      line-height: 2em;
     }
     .post-item {
       padding: 20px 0;
@@ -48,7 +48,8 @@
     }
     .post-img {
       max-width: 200px;
-      opacity: 0.5;
+      opacity: 0.3;
+      margin-right: 20px;
     }
   </style>
 </body>

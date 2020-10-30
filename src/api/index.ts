@@ -93,8 +93,10 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         pid
       })
     })
-    console.log(postList[0])
+    console.log('post获取成功', postList)
     return postList
+  }).catch(err => {
+    console.error('网络错误', err)
   })
 }
 
@@ -126,4 +128,4 @@ export function getCommentList() {
 //   console.log(postList)
 // }
 // testTieba()
-getPostList()
+// getPostList()

@@ -35,36 +35,25 @@
 				"command": "tieba-index.refresh",
 				"title": "刷新",
 				"icon": "img/refresh.svg"
+			},
+			{
+				"command": "tieba.openExternal",
+				"title": "用浏览器打开",
+				"icon": "img/link.svg"
 			}
 		],
 		"menus": {
-			"editor/context": [
-				{
-					"when": "editorFocus",
-					"command": "tieba.thread",
-					"group": "navigation"
-				},
-				{
-					"when": "editorFocus",
-					"command": "tieba.post",
-					"group": "navigation"
-				}
-			],
-			"editor/title": [
-				{
-					"command": "tieba.thread",
-					"group": "navigation"
-				},
-				{
-					"command": "tieba.post",
-					"group": "navigation"
-				}
-			],
+			"editor/title": [],
 			"view/title": [],
 			"view/item/context": [
 				{
 					"command": "tieba-index.refresh",
 					"when": "view == tieba-index && viewItem == 1",
+					"group": "inline"
+				},
+				{
+					"command": "tieba.openExternal",
+					"when": "view == tieba-index && viewItem == 0",
 					"group": "inline"
 				}
 			]
@@ -105,7 +94,6 @@
 		"@types/cheerio": "^0.22.22",
 		"@types/glob": "^7.1.3",
 		"@types/jest": "^26.0.15",
-		"@types/mocha": "^8.0.0",
 		"@types/node": "^12.11.7",
 		"@types/vscode": "^1.50.0",
 		"@typescript-eslint/eslint-plugin": "^4.1.1",
@@ -113,7 +101,6 @@
 		"eslint": "^7.9.0",
 		"glob": "^7.1.6",
 		"jest": "^26.6.1",
-		"mocha": "^8.1.3",
 		"ts-jest": "^26.4.3",
 		"ts-node": "^9.0.0",
 		"typescript": "^4.0.2",

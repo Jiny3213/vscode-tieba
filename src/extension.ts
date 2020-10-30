@@ -38,7 +38,11 @@ export function activate(context: vscode.ExtensionContext) {
 		threadProvider.refresh(node)
 	})
 
-	
+	// 用浏览器打开帖子
+	vscode.commands.registerCommand('tieba.openExternal', (node: ThreadNode) => {
+		const uri = vscode.Uri.parse(node.thread!.href)
+		vscode.env.openExternal(uri)
+	})
 }
 
 export function deactivate() {
