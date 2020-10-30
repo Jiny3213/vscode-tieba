@@ -23,11 +23,17 @@ export class ThreadProvider implements vscode.TreeDataProvider<ThreadNode> {
         const threadList = await getThreadList(element.label)
         let nodeList: ThreadNode[] = []
         for(let item of threadList) {
-          nodeList.push(new ThreadNode(item.title, false, item))
+          let threadNode = new ThreadNode(item.title, false, item)
+          threadNode.command = {
+            title: 'openPostView',
+            command: 'tieba.openPostView',
+            tooltip: 'openPostView',
+            arguments: [threadNode.thread?.href]
+          };
+          nodeList.push(threadNode)
         }
         return Promise.resolve(nodeList)
       }
-      // 点击帖子
       else {
         console.log(element.thread!.href)
         return Promise.resolve([])

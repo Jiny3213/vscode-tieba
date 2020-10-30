@@ -2,8 +2,8 @@ import * as path from 'path'
 import * as vscode from 'vscode';
 import * as fs from 'fs'
 
-// 获取html
 // 方法参考 http://blog.haoji.me/vscode-plugin-webview.html
+// 获取静态资源
 export function getWebViewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel, htmlPath: string) {
   const resourcePath = path.join(context.extensionPath, htmlPath)
   let html = fs.readFileSync(resourcePath, 'utf-8')
@@ -17,10 +17,10 @@ export function getWebViewContent(context: vscode.ExtensionContext, panel: vscod
 }
 
 interface MessageHandler {
-  [propName: string]: any
+  [propName: string]: (message: WebviewMessage) => Promise<any>
 }
 
-class MethodHandler {
+export class MethodHandler {
   // 供webview调用的方法
   public messageHandler: MessageHandler
   public panel: vscode.WebviewPanel
@@ -30,6 +30,8 @@ class MethodHandler {
     this.context = context
     this.panel = panel
     this.messageHandler = {}
+    this.init()
+    
   }
   // const messageHandler:MessageHandler = {
   //   sayHello(message: any) {
@@ -45,11 +47,13 @@ class MethodHandler {
   //     })
   //   }
   // }
+
   init() {
     // 监听消息
-    this.panel.webview.onDidReceiveMessage(message => {
+    this.panel.webview.onDidReceiveMessage(async (message: WebviewMessage) => {
       if(this.messageHandler[message.cmd]) {
-        this.messageHandler[message.cmd](message)
+        const result = await this.messageHandler[message.cmd](message)
+        this.invokeCallback(message, result) // 自动回调
       }
       else {
         console.log(`未找到名为${message.cmd}的方法`)

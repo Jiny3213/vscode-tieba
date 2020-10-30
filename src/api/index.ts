@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as cheerio from 'cheerio'
 import * as fs from 'fs'
 
+// 获取某个吧的帖子
 export function getThreadList(keyword: string = '高达模型'):Promise<ThreadItem[]> {
   
   return axios.get('https://tieba.baidu.com/f', {
@@ -40,18 +41,19 @@ export function getThreadList(keyword: string = '高达模型'):Promise<ThreadIt
   })
 }
 
+
 // 获取一个帖子的内容
-export function getPostList() {
-  return axios.get('https://tieba.baidu.com/p/7029367562', {
+export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1) {
+  return axios.get(url, {
     params: {
-      pn: 1, // 第一页: 1
+      pn: page, // 第一页: 1
       ajax: 1,
-      t: 1603270535773
+      t: new Date().getTime()
     }
   }).then(res => {
     const html = res.data
     const $ = cheerio.load(html)
-
+    // fs.writeFileSync('./test.html', html)
     // 评论人非常复杂, 稍后处理
     interface commentItem {
       content: string, // 评论内容
@@ -91,6 +93,7 @@ export function getPostList() {
         pid
       })
     })
+    console.log(postList[0])
     return postList
   })
 }
@@ -112,14 +115,15 @@ export function getCommentList() {
   })
 }
 
-console.log('测试api')
-async function testTieba() {
-  const postList = await getPostList()
-  const commentList = await getCommentList()
-  for(let [k, v] of Object.entries(commentList)) {
-    let targetPost = postList.find(item => item.pid === k)
-    targetPost!.commentList = v['comment_info']
-  }
-  console.log(postList)
-}
-testTieba()
+// console.log('测试api')
+// async function testTieba() {
+//   const postList = await getPostList()
+//   const commentList = await getCommentList()
+//   for(let [k, v] of Object.entries(commentList)) {
+//     let targetPost = postList.find(item => item.pid === k)
+//     targetPost!.commentList = v['comment_info']
+//   }
+//   console.log(postList)
+// }
+// testTieba()
+getPostList()

@@ -8,16 +8,48 @@
   <script src="out/utils/message.js"></script>
 </head>
 <body>
-  <div id="app">{{name}}</div>
+  <div id="app">
+    <div v-if="postList.length">
+      <div class="post-item" v-for="item in postList" :key="item.pid">
+        <div>author: {{item.author}}</div>
+        <div>{{item.text}}</div>
+        <div v-if="item.imageList.length">
+          <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src">
+        </div>
+      </div>
+    </div>
+    
+  </div>
   <script>
     const app = {
       data() {
         return {
-          name: 'jin'
+          url: '',
+          postList: []
         }
+      },
+      created() {
+        callVscode('getPostList').then(res => {
+          console.log(res)
+          this.postList = res
+        })
+
       }
     }
     Vue.createApp(app).mount('#app')
   </script>
+  <style>
+    body {
+      color: #d4d4d4;
+    }
+    .post-item {
+      padding: 20px 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+    .post-img {
+      max-width: 200px;
+      opacity: 0.5;
+    }
+  </style>
 </body>
 </html>

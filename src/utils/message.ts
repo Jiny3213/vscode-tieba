@@ -9,8 +9,9 @@ const callbacks:CallBacks = {}
 const vscode = acquireVsCodeApi()
 
 // 发送消息
-function callVscode(cmd: string, data?: any, cb?: Function) {
+function callVscode(cmd: string, data?: any): Promise<any> {
   const cbid = Date.now() + '' +  Math.round(Math.random() * 100000)
+  console.log(cbid)
   let webviewMessage:WebviewMessage = {
     cmd: cmd,
     cbid: cbid
