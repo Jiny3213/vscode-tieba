@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from './axios'
 import * as cheerio from 'cheerio'
 import * as fs from 'fs'
 interface ThreadItem {
@@ -161,3 +161,17 @@ export function getCommentList(tid: string, fid: string): Promise<CommentObj> {
     return commentList
   })
 }
+
+export function getMyForum() {
+  return axios.get('https://tieba.baidu.com').then(res => {
+    const html = res.data
+    const re = /<script>(?:(?!<\/script).)*spage\/widget\/AsideV2.*?(\[\[\{.*?\}\]\]).*?<\/script>/
+    console.log(html.match(re)[1])
+    // 获取关注的吧
+    const forumList = JSON.parse(html.match(re)[1])
+    console.log(forumList)
+  })
+}
+// <script>((?!<\/script).)*spage/widget/AsideV2.*?</script> 匹配
+
+// getMyForum()

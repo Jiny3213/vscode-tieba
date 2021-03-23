@@ -8,7 +8,7 @@ import {ThreadProvider, ThreadNode} from './provider/ThreadProvider'
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "tieba" is now active!');
-
+	context.globalState.update('test', '666')
 	// 帖子列表
 	context.subscriptions.push(thread(context))
 
