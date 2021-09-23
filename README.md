@@ -10,4 +10,11 @@ vscode 贴吧插件, 用 vscode 刷贴吧
 
 ## 开发进度
 
-详见 [changelog](CHANGELOG.md)
+详见 changelog
+
+## 开发备注
+参考博客 http://blog.haoji.me/vscode-plugin-overview.html
+参考文档 https://code.visualstudio.com/api/references/vscode-api
+
+安装打包工具 `npm i vsce -g`
+本地打包 `vsce package`

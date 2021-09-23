@@ -8,15 +8,25 @@ import {ThreadProvider, ThreadNode} from './provider/ThreadProvider'
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "tieba" is now active!');
-	context.globalState.update('test', '666')
+  let defaultBaList = ['java', 'python']
+  let baList: string[] = context.globalState.get('baList') || []
+  if(!baList.length) {
+	  context.globalState.update('baList', defaultBaList)
+    baList = defaultBaList
+  }
 	// 帖子列表
 	context.subscriptions.push(thread(context))
 
 	// 打开帖子
 	context.subscriptions.push(openPostView(context))
+  context.subscriptions.push(vscode.commands.registerCommand('tieba.sayHello', function (e) {
+    console.log(e)
+		vscode.window.showInformationMessage('Hello World!');
+	}));
+
 
 	// 创建树
-	const threadProvider = new ThreadProvider()
+	let threadProvider = new ThreadProvider(baList)
 	vscode.window.createTreeView(
 		'tieba-index',
 		{
@@ -25,17 +35,48 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 	
 	// 测试多个treeView
-	const otherProvider = new ThreadProvider()
-	vscode.window.createTreeView(
-		'tieba-other',
-		{
-			treeDataProvider: threadProvider
-		}
-	)
+	// const otherProvider = new ThreadProvider(baList)
+	// vscode.window.createTreeView(
+	// 	'tieba-other',
+	// 	{
+	// 		treeDataProvider: threadProvider
+	// 	}
+	// )
 
 	// 刷新帖子列表
 	vscode.commands.registerCommand('tieba-index.refresh', (node: ThreadNode) => {
 		threadProvider.refresh(node)
+	})
+  // 删除吧
+  vscode.commands.registerCommand('tieba.delete', (node: ThreadNode) => {
+		console.log('delete', node.label)
+    baList = baList.filter(item => item !== node.label)
+    context.globalState.update('baList', baList)
+    threadProvider = new ThreadProvider(baList)
+    vscode.window.createTreeView(
+      'tieba-index',
+      {
+        treeDataProvider: threadProvider
+      }
+    )
+	})
+  // 增加一个吧
+  vscode.commands.registerCommand('tieba.add', (node: ThreadNode) => {
+    vscode.window.showInputBox({
+      placeHolder: '添加贴吧'
+    }).then(baName => {
+      if (baName) {
+        baList.push(baName)
+        context.globalState.update('baList', baList)
+        threadProvider = new ThreadProvider(baList)
+        vscode.window.createTreeView(
+          'tieba-index',
+          {
+            treeDataProvider: threadProvider
+          }
+        )
+      }
+    })
 	})
 
 	// 用浏览器打开帖子

@@ -3,8 +3,8 @@ import {getThreadList} from '../api/index'
 
 export class ThreadProvider implements vscode.TreeDataProvider<ThreadNode> {
   public baList: ThreadNode[] = []
-  constructor() {
-    this.baList = ['高达模型', '明日方舟', '原神'].map(item => {
+  constructor(baList: string[]) {
+    this.baList = baList.map(item => {
       return new ThreadNode(item, true)
     })
   }
