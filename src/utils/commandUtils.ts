@@ -6,13 +6,17 @@ import * as fs from 'fs'
 // 获取静态资源
 export function getWebViewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel, htmlPath: string) {
   const resourcePath = path.join(context.extensionPath, htmlPath)
+  const dirPath = path.dirname(resourcePath);
   let html = fs.readFileSync(resourcePath, 'utf-8')
   // 静态资源路径转换,引用ts的路径需要写out/中的js
+  // html = html.replace(/(<link.+?href="|<script.+?src=")(.+?)"/g, (m, $1, $2) => {
+  //   const onDiskPath = vscode.Uri.file(path.join(context.extensionPath, $2))
+  //   const webViewPath = panel.webview.asWebviewUri(onDiskPath)
+  //   return $1 + webViewPath + '"'
+  // });
   html = html.replace(/(<link.+?href="|<script.+?src=")(.+?)"/g, (m, $1, $2) => {
-    const onDiskPath = vscode.Uri.file(path.join(context.extensionPath, $2))
-    const webViewPath = panel.webview.asWebviewUri(onDiskPath)
-    return $1 + webViewPath + '"'
-  });
+		return $1 + vscode.Uri.file(path.resolve(dirPath, $2)).with({ scheme: 'vscode-resource' }).toString() + '"';
+	});
   return html;
 }
 

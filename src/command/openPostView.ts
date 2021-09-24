@@ -23,6 +23,11 @@ export function openPostView(context: vscode.ExtensionContext) {
         return getPostList(thread.href)
       }
     }
-    panel.webview.html = getWebViewContent(context, panel, 'src/views/post/post.html')
+
+    try {
+      panel.webview.html = getWebViewContent(context, panel, 'src/views/post/post.html')
+    } catch (err) {
+      console.error(err) // 容易发生文件引用错误
+    }
   })
 }

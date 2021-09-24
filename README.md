@@ -18,3 +18,6 @@ vscode 贴吧插件, 用 vscode 刷贴吧
 
 安装打包工具 `npm i vsce -g`
 本地打包 `vsce package`
+
+调试webview: cmd+p `>Open Webview Developer Tools`
+调试报错看不出来时，使用try catch

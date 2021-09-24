@@ -3,6 +3,7 @@
 	"publisher": "Jiny3213",
 	"displayName": "vscode-tieba",
 	"description": "用vscode上贴吧",
+  "repository": "https://github.com/Jiny3213/vscode-tieba",
 	"keywords": [
 		"tieba"
 	],
