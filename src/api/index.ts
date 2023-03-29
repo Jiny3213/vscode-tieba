@@ -1,6 +1,7 @@
 import axios from './axios'
 import * as cheerio from 'cheerio'
 import * as fs from 'fs'
+import * as vscode from 'vscode';
 interface ThreadItem {
   title: string, // 帖子的标题
   href: string, // 帖子的链接
@@ -95,6 +96,11 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         pid
       })
     })
+    if($('title').text() === '百度安全验证' || !postList.length) {
+      vscode.window.showInformationMessage('err：触发百度安全验证，请打开浏览器验证，并重新获取cookie')
+      console.log(html)
+      return []
+    }
     console.log('postlist 处理完毕, 开始获取comment')
     const tid = url.match(/\/(\d*)$/)![1]
     const commentList = await getCommentList(tid, forumId!)
@@ -152,6 +158,7 @@ export function getCommentList(tid: string, fid: string): Promise<CommentObj> {
     console.log('comment已返回')
     let commentList: CommentObj = res.data.data.comment_list
     let userList: UserObj = res.data.data.user_list
+    console.log('commentList', commentList)
     for(let item of Object.values(commentList)) {
       (item as CommentItem).comment_info.forEach(commentInfo => {
         commentInfo.username = userList[commentInfo.user_id].nickname
