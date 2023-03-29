@@ -3,7 +3,7 @@
 	"publisher": "Jiny3213",
 	"displayName": "vscode-tieba",
 	"description": "用vscode上贴吧",
-  "repository": "https://github.com/Jiny3213/vscode-tieba",
+	"repository": "https://github.com/Jiny3213/vscode-tieba",
 	"keywords": [
 		"tieba"
 	],
@@ -37,7 +37,7 @@
 				"title": "刷新",
 				"icon": "img/refresh.svg"
 			},
-      {
+			{
 				"command": "tieba.delete",
 				"title": "删除"
 			},
@@ -46,17 +46,22 @@
 				"title": "用浏览器打开",
 				"icon": "img/link.svg"
 			},
-      {
-        "command": "tieba.sayHello",
-        "title": "Hello World"
-      },
-      {
-        "command": "tieba.add",
-        "title": "添加贴吧",
+			{
+				"command": "tieba.sayHello",
+				"title": "Hello World"
+			},
+			{
+				"command": "tieba.add",
+				"title": "添加贴吧",
 				"icon": "img/link.svg"
-      }
+			},
+			{
+				"command": "tieba.cookie",
+				"title": "设置cookie",
+				"icon": "img/link.svg"
+			}
 		],
-    "keybindings": [
+		"keybindings": [
 			{
 				"command": "tieba.sayHello",
 				"key": "ctrl+f10",
@@ -66,26 +71,31 @@
 		],
 		"menus": {
 			"editor/context": [
-        {
+				{
 					"when": "editorFocus",
 					"command": "tieba.sayHello",
 					"group": "navigation"
 				}
-      ],
+			],
 			"view/title": [
-        {
+				{
 					"command": "tieba.add",
 					"when": "view == tieba-index",
 					"group": "inline"
+				},
+				{
+					"command": "tieba.cookie",
+					"when": "view == tieba-index",
+					"group": "inline"
 				}
-      ],
+			],
 			"view/item/context": [
 				{
 					"command": "tieba-index.refresh",
 					"when": "view == tieba-index && viewItem == 1",
 					"group": "inline"
 				},
-        {
+				{
 					"command": "tieba.delete",
 					"when": "view == tieba-index && viewItem == 1",
 					"group": "inline"

@@ -5,25 +5,34 @@ import * as vscode from 'vscode';
 import {thread} from './command/thread'
 import {openPostView} from './command/openPostView'
 import {ThreadProvider, ThreadNode} from './provider/ThreadProvider'
+import { setCookie } from './api/axios'
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "tieba" is now active!');
   let defaultBaList = ['java', 'python']
+
+	// 我的吧持久化
   let baList: string[] = context.globalState.get('baList') || []
   if(!baList.length) {
 	  context.globalState.update('baList', defaultBaList)
     baList = defaultBaList
   }
+
+	// cookie 持久化
+	let cookie: string = context.globalState.get('cookie') || ''
+	setCookie(cookie)
+
 	// 帖子列表
 	context.subscriptions.push(thread(context))
 
 	// 打开帖子
 	context.subscriptions.push(openPostView(context))
+
+	// test
   context.subscriptions.push(vscode.commands.registerCommand('tieba.sayHello', function (e) {
     console.log(e)
 		vscode.window.showInformationMessage('Hello World!');
 	}));
-
 
 	// 创建树
 	let threadProvider = new ThreadProvider(baList)
@@ -60,6 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     )
 	})
+
   // 增加一个吧
   vscode.commands.registerCommand('tieba.add', (node: ThreadNode) => {
     vscode.window.showInputBox({
@@ -75,6 +85,19 @@ export function activate(context: vscode.ExtensionContext) {
             treeDataProvider: threadProvider
           }
         )
+      }
+    })
+	})
+
+	// 修改cookie
+	vscode.commands.registerCommand('tieba.cookie', (node: ThreadNode) => {
+    vscode.window.showInputBox({
+      placeHolder: '输入贴吧cookie'
+    }).then(cookie => {
+      if (cookie) {
+        context.globalState.update('cookie', cookie)
+				setCookie(cookie)
+        console.log('setCookie: ', cookie)
       }
     })
 	})
