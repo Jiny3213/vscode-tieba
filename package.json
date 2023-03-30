@@ -15,23 +15,11 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:tieba.thread",
-		"onCommand:tieba.post",
 		"onView:tieba-index"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
-			{
-				"command": "tieba.thread",
-				"title": "帖子列表",
-				"icon": "img/tieba.png"
-			},
-			{
-				"command": "tieba.post",
-				"title": "帖子详情",
-				"icon": "img/tieba.png"
-			},
 			{
 				"command": "tieba-index.refresh",
 				"title": "刷新",
@@ -47,10 +35,6 @@
 				"icon": "img/link.svg"
 			},
 			{
-				"command": "tieba.sayHello",
-				"title": "Hello World"
-			},
-			{
 				"command": "tieba.add",
 				"title": "添加贴吧",
 				"icon": "img/link.svg"
@@ -61,22 +45,9 @@
 				"icon": "img/link.svg"
 			}
 		],
-		"keybindings": [
-			{
-				"command": "tieba.sayHello",
-				"key": "ctrl+f10",
-				"mac": "cmd+f10",
-				"when": "editorTextFocus"
-			}
-		],
+		"keybindings": [],
 		"menus": {
-			"editor/context": [
-				{
-					"when": "editorFocus",
-					"command": "tieba.sayHello",
-					"group": "navigation"
-				}
-			],
+			"editor/context": [],
 			"view/title": [
 				{
 					"command": "tieba.add",
@@ -121,10 +92,6 @@
 				{
 					"id": "tieba-index",
 					"name": "首页"
-				},
-				{
-					"id": "tieba-other",
-					"name": "其他"
 				}
 			]
 		}
@@ -137,7 +104,8 @@
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js --disable-extensions",
 		"jest": "jest",
-		"mocha": "mocha"
+		"mocha": "mocha",
+		"build": "vsce package"
 	},
 	"devDependencies": {
 		"@types/cheerio": "^0.22.22",
@@ -152,12 +120,13 @@
 		"jest": "^26.6.1",
 		"ts-jest": "^26.4.3",
 		"ts-node": "^9.0.0",
-		"typescript": "^4.0.2",
+		"typescript": "^5.0.2",
+		"vsce": "^2.15.0",
 		"vscode-test": "^1.4.0"
 	},
 	"dependencies": {
 		"axios": "^0.20.0",
-		"cheerio": "^1.0.0-rc.3",
+		"cheerio": "^1.0.0-rc.12",
 		"vue": "^3.0.1"
 	}
 }

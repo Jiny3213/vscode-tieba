@@ -35,22 +35,7 @@ export class MethodHandler {
     this.panel = panel
     this.messageHandler = {}
     this.init()
-    
   }
-  // const messageHandler:MessageHandler = {
-  //   sayHello(message: any) {
-  //     console.log('hello')
-  //     invokeCallback(message, 'had call sayHello')
-  //   },
-
-  //   // 获取贴吧首页帖子列表
-  //   getIndexPage(message: any) {
-  //     const baName = message.baName
-  //     getTopicList(baName).then(result => {
-  //       invokeCallback(message, result)
-  //     })
-  //   }
-  // }
 
   init() {
     // 监听消息

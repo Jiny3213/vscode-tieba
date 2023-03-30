@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import {getWebViewContent, MethodHandler} from '../utils/commandUtils'
-import {getPostList} from '../api/index'
+import { getWebViewContent, MethodHandler } from '../utils/commandUtils'
+import { getPostList } from '../api/index'
 
-// 展示某个帖子
 export function openPostView(context: vscode.ExtensionContext) {
+  // 注册「打开页面」命令，将会在其他地方调用这个命令
   return vscode.commands.registerCommand('tieba.openPostView', async (thread: ThreadItem) => {
     const panel = vscode.window.createWebviewPanel(
       'post',
@@ -16,7 +16,8 @@ export function openPostView(context: vscode.ExtensionContext) {
     )
     const handler = new MethodHandler(context, panel)
     handler.messageHandler = {
-      sayHello (message) {
+      sayHello(message) {
+        console.log('sayHello in openPostView')
         return Promise.resolve('had call sayHello')
       },
       getPostList(message) {

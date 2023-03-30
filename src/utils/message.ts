@@ -1,3 +1,5 @@
+// post.html 引用此文件，用于消息传递
+
 // 没有类型定义
 declare function acquireVsCodeApi():any 
 
@@ -47,5 +49,5 @@ window.addEventListener('message', event => {
 })
 
 callVscode('sayHello').then(res => {
-  console.log(res)
+  console.log('sayHellow in message', res)
 })
