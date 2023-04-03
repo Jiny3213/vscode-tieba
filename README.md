@@ -15,3 +15,7 @@ vscode 贴吧插件, 目前是只读贴吧，暂不支持评论和发帖。
 ## 开发进度
 
 详见 changelog
+
+## issue
+
+https://github.com/Jiny3213/vscode-tieba/issues
