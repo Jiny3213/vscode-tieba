@@ -1,13 +1,13 @@
 {
 	"name": "vscode-tieba",
-	"publisher": "Jiny3213",
+	"publisher": "wister",
 	"displayName": "vscode-tieba",
-	"description": "用vscode上贴吧",
-	"repository": "https://github.com/Jiny3213/vscode-tieba",
+	"description": "用vscode看贴吧",
+	"repository": "",
 	"keywords": [
 		"tieba"
 	],
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
