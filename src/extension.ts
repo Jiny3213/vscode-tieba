@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // cookie 持久化
   let cookie: string = context.globalState.get('cookie') || ''
-  setCookie(cookie)
+  setCookie(cookie, context) // 首次加载state中的cookie，传入context
 
   // 注册「打开 webview」命令
   context.subscriptions.push(openPostView(context))
@@ -63,9 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
     const pick = await vscode.window.showQuickPick([
       {
         label: '按时间倒序',
-        description: '123123123',
-        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=1'
-        // 第二页 ?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&rn=10&un=&only_thread=0&sm=1&sd=&ed=&pn=2
+        // description: '123123123',
         query: {
           // isnew: 1,
           // un: '',
@@ -79,8 +77,6 @@ export function activate(context: vscode.ExtensionContext) {
       },
       {
         label: '按时间顺序',
-        description: '2222222',
-        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=0'
         query: {
           isnew: 1,
           un: '',
@@ -94,8 +90,6 @@ export function activate(context: vscode.ExtensionContext) {
       },
       {
         label: '按相关性顺序',
-        description: '2222222',
-        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=2'
         query: {
           isnew: 1,
           un: '',
@@ -109,8 +103,6 @@ export function activate(context: vscode.ExtensionContext) {
       },
       {
         label: '只看主题贴',
-        description: '2222222',
-        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=1&only_thread=1'
         query: {
           isnew: 1,
           un: '',
@@ -166,9 +158,7 @@ export function activate(context: vscode.ExtensionContext) {
       placeHolder: '输入贴吧cookie'
     }).then(cookie => {
       if (cookie) {
-        context.globalState.update('cookie', cookie)
         setCookie(cookie)
-        console.log('setCookie: ', cookie)
         vscode.window.showInformationMessage('设置cookie成功')
       }
     })

@@ -1,7 +1,10 @@
 import axios from 'axios'
 import * as vscode from 'vscode';
-import * as fs from 'fs'
-import * as path from 'path'
+import { saveObj } from '../utils/test';
+
+let store = {
+  context: null as vscode.ExtensionContext | null
+}
 
 console.log('windowState', vscode.window.state)
 const instance = axios.create({
@@ -20,18 +23,21 @@ instance.interceptors.request.use(config => {
 
 instance.interceptors.response.use(res => {
   console.log('响应：', res)
-  console.log('setCookie: ', res.headers['set-cookie'])
+  // 响应set-cookie
   if(res.headers['set-cookie']) {
+    console.log('setCookie: ', res.headers['set-cookie'])
     const cookieList: string[] = res.headers['set-cookie']
+    let currentCookieObj = parseCookie(instance.defaults.headers.cookie)
     cookieList.forEach(item => {
-      instance.defaults.headers.cookie = Object.assign(instance.defaults.headers.cookie, parseCookie(item))
+      currentCookieObj = Object.assign(currentCookieObj, parseCookie(item))
     })
+    const cookieStr = stringifyCookie(currentCookieObj)
+    setCookie(cookieStr)
   }
   if(/static\/captcha\/tuxing\.html/.test(res.request.path)) {
     console.log('触发百度安全验证')
     vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
   }
-  // fs.writeFileSync(path.join(__dirname, `../../testData/${new Date().getTime()}`), res.data)
   return res
 }, res => {
   console.log('响应error：', res)
@@ -40,19 +46,34 @@ instance.interceptors.response.use(res => {
 
 export default instance
 
-export function setCookie(cookie: string) {
+export function setCookie(cookie: string, context?: vscode.ExtensionContext) {
+  // saveObj(parseCookie(cookie))
   instance.defaults.headers.cookie = cookie
+  if(context) { // 首次传入context
+    store.context = context
+  } else { // 修改cookie
+    store.context && store.context.globalState.update('cookie', cookie)
+  }
 }
 
+// string => obj
 function parseCookie(cookie: string) {
   const cookieObj: Record<string, string> = {}
   cookie.split(';').forEach(item => {
     const keyValue = item.split('=')
+    if(keyValue.length < 2) return
     const [key, value] = keyValue
-    const keyNotCookie = ['path', 'expires', 'domain']
+    const keyNotCookie = ['path', 'expires', 'domain', 'max-age']
     if(!keyNotCookie.includes(key.trim().toLowerCase())) {
       cookieObj[key.trim()] = value.trim()
     }
   })
   return cookieObj
+}
+
+// obj => string
+function stringifyCookie(obj: object) {
+  return Object.entries(obj).map(([key, value]) => {
+    return `${key}=${value}`
+  }).join(';')
 }
