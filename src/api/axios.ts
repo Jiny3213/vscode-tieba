@@ -20,7 +20,15 @@ instance.interceptors.request.use(config => {
 
 instance.interceptors.response.use(res => {
   console.log('响应：', res)
+  console.log('setCookie: ', res.headers['set-cookie'])
+  if(res.headers['set-cookie']) {
+    const cookieList: string[] = res.headers['set-cookie']
+    cookieList.forEach(item => {
+      instance.defaults.headers.cookie = Object.assign(instance.defaults.headers.cookie, parseCookie(item))
+    })
+  }
   if(/static\/captcha\/tuxing\.html/.test(res.request.path)) {
+    console.log('触发百度安全验证')
     vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
   }
   // fs.writeFileSync(path.join(__dirname, `../../testData/${new Date().getTime()}`), res.data)
@@ -34,4 +42,17 @@ export default instance
 
 export function setCookie(cookie: string) {
   instance.defaults.headers.cookie = cookie
+}
+
+function parseCookie(cookie: string) {
+  const cookieObj: Record<string, string> = {}
+  cookie.split(';').forEach(item => {
+    const keyValue = item.split('=')
+    const [key, value] = keyValue
+    const keyNotCookie = ['path', 'expires', 'domain']
+    if(!keyNotCookie.includes(key.trim().toLowerCase())) {
+      cookieObj[key.trim()] = value.trim()
+    }
+  })
+  return cookieObj
 }

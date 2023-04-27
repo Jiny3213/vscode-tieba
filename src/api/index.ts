@@ -97,8 +97,7 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
       })
     })
     if($('title').text() === '百度安全验证' || !postList.length) {
-      vscode.window.showInformationMessage('err：触发百度安全验证，请打开浏览器验证，并重新获取cookie')
-      console.log(html)
+      vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
       return []
     }
     console.log('postlist 处理完毕, 开始获取comment')

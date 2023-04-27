@@ -17,7 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   // cookie 持久化
   let cookie: string = context.globalState.get('cookie') || ''
-  console.log('当前cookie：', cookie)
   setCookie(cookie)
 
   // 注册「打开 webview」命令
@@ -68,14 +67,14 @@ export function activate(context: vscode.ExtensionContext) {
         // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=1'
         // 第二页 ?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&rn=10&un=&only_thread=0&sm=1&sd=&ed=&pn=2
         query: {
-          isnew: 1,
-          un: '',
-          sd: '',
-          ed: '',
-          rn: 20, // 大概是每页有多少个
-          sm: 1, // 1 按时间倒序，2按相关性顺序，0按时间顺序
-          pn: 1, // 页数
-          only_thread: 0 // 只看主题
+          // isnew: 1,
+          // un: '',
+          // sd: '',
+          // ed: '',
+          // rn: 20, // 大概是每页有多少个
+          // sm: 1, // 1 按时间倒序，2按相关性顺序，0按时间顺序
+          // pn: 1, // 页数
+          // only_thread: 0 // 只看主题
         }
       },
       {
@@ -131,13 +130,15 @@ export function activate(context: vscode.ExtensionContext) {
     })
     console.log('keyword', keyword)
 
-    const query = Object.assign(pick.query, {
-      kw: node.label,
-      qw: keyword
-    })
-
-    node.params = query
-    threadProvider.refresh(node)
+    if(pick && keyword) {
+      const query = Object.assign(pick.query, {
+        kw: node.label,
+        qw: keyword,
+        ie: 'utf-8'
+      })
+      node.params = query
+      threadProvider.refresh(node)
+    }
   })
 
   // 增加一个吧

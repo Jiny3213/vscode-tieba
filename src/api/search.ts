@@ -10,11 +10,7 @@ export function search(params: any) {
     params,
     responseType: "arraybuffer" 
   }).then(res => {
-    console.log(res)
     const html = iconv.decode(res.data, 'GBK')
-    // fs.writeFileSync(path.join(__dirname, '../../testData/search.html'), html, {
-    //   encoding: 'utf-8'
-    // })
     const $ = cheerio.load(html)
     let threadList: ThreadItem[] = []
     $('.s_post').each((index, item) => {
@@ -25,6 +21,12 @@ export function search(params: any) {
       })
     })
     console.log('searchThreadList', threadList)
+    if(!threadList.length) {
+      console.log(html)
+      // fs.writeFileSync(path.join(__dirname, '../../testData/search.html'), html, {
+      //   encoding: 'utf-8'
+      // })
+    }
     return threadList
   })
 }
