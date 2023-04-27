@@ -15,5 +15,5 @@ interface CallbackMessage {
 declare interface ThreadItem {
   title: string, // 帖子的标题
   href: string, // 帖子的链接
-  images: Array<string> // 帖子的图
+  images?: Array<string> // 帖子的图
 }

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import {getThreadList} from '../api/index'
+import { search } from '../api/search';
 
 export class ThreadProvider implements vscode.TreeDataProvider<ThreadNode> {
   public baList: ThreadNode[] = []
@@ -19,7 +20,12 @@ export class ThreadProvider implements vscode.TreeDataProvider<ThreadNode> {
     else {
       // 展开帖子列表
       if(element.isRoot) {
-        const threadList = await getThreadList(element.label)
+        let threadList = []
+        if(element.params) { // 搜索
+          threadList = await search(element.params)
+        } else {
+          threadList = await getThreadList(element.label)
+        }
         let nodeList: ThreadNode[] = []
         for(let item of threadList) {
           let threadNode = new ThreadNode(item.title, false, item)
@@ -53,12 +59,14 @@ export class ThreadNode extends vscode.TreeItem {
   constructor (
     public label: string,
     public isRoot: boolean,
-    public thread?: ThreadItem
+    public thread?: ThreadItem,
+    public params?: object | null
     ) {
     super(label, isRoot ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None)
     this.isRoot = isRoot,
     this.thread = thread
     // view/item/context 中的when可以通过viewItem取到
     this.contextValue = isRoot ? '1' : '0'
+    this.params = null
   }
 }

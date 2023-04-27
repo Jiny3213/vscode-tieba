@@ -40,6 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // 刷新帖子列表
   vscode.commands.registerCommand('tieba-index.refresh', (node: ThreadNode) => {
+    node.params = null
     threadProvider.refresh(node)
   })
 
@@ -55,6 +56,88 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: threadProvider
       }
     )
+  })
+
+  // 搜索帖子
+  vscode.commands.registerCommand('tieba.search', async (node: ThreadNode) => {
+    console.log('search ba', node.label)
+    const pick = await vscode.window.showQuickPick([
+      {
+        label: '按时间倒序',
+        description: '123123123',
+        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=1'
+        // 第二页 ?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&rn=10&un=&only_thread=0&sm=1&sd=&ed=&pn=2
+        query: {
+          isnew: 1,
+          un: '',
+          sd: '',
+          ed: '',
+          rn: 20, // 大概是每页有多少个
+          sm: 1, // 1 按时间倒序，2按相关性顺序，0按时间顺序
+          pn: 1, // 页数
+          only_thread: 0 // 只看主题
+        }
+      },
+      {
+        label: '按时间顺序',
+        description: '2222222',
+        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=0'
+        query: {
+          isnew: 1,
+          un: '',
+          sd: '',
+          ed: '',
+          rn: 20, // 大概是每页有多少个
+          sm: 0, // 1 按时间倒序，2按相关性顺序，0按时间顺序
+          pn: 1, // 页数
+          only_thread: 0 // 只看主题
+        }
+      },
+      {
+        label: '按相关性顺序',
+        description: '2222222',
+        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=2'
+        query: {
+          isnew: 1,
+          un: '',
+          sd: '',
+          ed: '',
+          rn: 20, // 大概是每页有多少个
+          sm: 2, // 1 按时间倒序，2按相关性顺序，0按时间顺序
+          pn: 1, // 页数
+          only_thread: 0 // 只看主题
+        }
+      },
+      {
+        label: '只看主题贴',
+        description: '2222222',
+        // query: '?isnew=1&kw=%CE%A2%D0%C5%D0%A1%B3%CC%D0%F2&qw=%B2%E2%CA%D4&un=&rn=10&pn=0&sd=&ed=&sm=1&only_thread=1'
+        query: {
+          isnew: 1,
+          un: '',
+          sd: '',
+          ed: '',
+          rn: 20, // 大概是每页有多少个
+          sm: 1, // 1 按时间倒序，2按相关性顺序，0按时间顺序
+          pn: 1, // 页数
+          only_thread: 1 // 只看主题
+        }
+      },
+    ])
+    console.log('pick', pick)
+
+    const keyword = await vscode.window.showInputBox({
+      placeHolder: '输入搜索内容'
+    })
+    console.log('keyword', keyword)
+
+    const query = Object.assign(pick.query, {
+      kw: node.label,
+      qw: keyword
+    })
+
+    node.params = query
+    threadProvider.refresh(node)
   })
 
   // 增加一个吧
@@ -85,6 +168,7 @@ export function activate(context: vscode.ExtensionContext) {
         context.globalState.update('cookie', cookie)
         setCookie(cookie)
         console.log('setCookie: ', cookie)
+        vscode.window.showInformationMessage('设置cookie成功')
       }
     })
   })

@@ -1,5 +1,7 @@
 import axios from 'axios'
 import * as vscode from 'vscode';
+import * as fs from 'fs'
+import * as path from 'path'
 
 console.log('windowState', vscode.window.state)
 const instance = axios.create({
@@ -14,6 +16,18 @@ const instance = axios.create({
 instance.interceptors.request.use(config => {
   console.log('请求：', config)
   return config
+})
+
+instance.interceptors.response.use(res => {
+  console.log('响应：', res)
+  if(/static\/captcha\/tuxing\.html/.test(res.request.path)) {
+    vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
+  }
+  // fs.writeFileSync(path.join(__dirname, `../../testData/${new Date().getTime()}`), res.data)
+  return res
+}, res => {
+  console.log('响应error：', res)
+  return res
 })
 
 export default instance

@@ -102,7 +102,8 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
       return []
     }
     console.log('postlist 处理完毕, 开始获取comment')
-    const tid = url.match(/\/(\d*)$/)![1]
+    // https://tieba.baidu.com/p/8313773571?pid=147133552225&cid=0#147133552225(搜索时的url)
+    const tid = url.match(/p\/(\d*)/)![1]
     const commentList = await getCommentList(tid, forumId!)
     // 把评论塞到postlist
     if(Object.keys(commentList).length) {

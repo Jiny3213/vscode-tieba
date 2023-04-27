@@ -3,11 +3,11 @@
 	"publisher": "wister",
 	"displayName": "vscode-tieba",
 	"description": "用vscode看贴吧",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Jiny3213/vscode-tieba"
-  },
-  "icon": "img/tieba.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Jiny3213/vscode-tieba"
+	},
+	"icon": "img/tieba.png",
 	"keywords": [
 		"tieba"
 	],
@@ -32,6 +32,10 @@
 			{
 				"command": "tieba.delete",
 				"title": "删除"
+			},
+      {
+				"command": "tieba.search",
+				"title": "搜索"
 			},
 			{
 				"command": "tieba.openExternal",
@@ -65,15 +69,20 @@
 				}
 			],
 			"view/item/context": [
+        {
+					"command": "tieba.search",
+					"when": "view == tieba-index && viewItem == 1",
+					"group": "inline@1"
+				},
+        {
+					"command": "tieba.delete",
+					"when": "view == tieba-index && viewItem == 1",
+					"group": "inline@2"
+				},
 				{
 					"command": "tieba-index.refresh",
 					"when": "view == tieba-index && viewItem == 1",
-					"group": "inline"
-				},
-				{
-					"command": "tieba.delete",
-					"when": "view == tieba-index && viewItem == 1",
-					"group": "inline"
+					"group": "inline@3"
 				},
 				{
 					"command": "tieba.openExternal",
@@ -109,7 +118,8 @@
 		"test": "node ./out/test/runTest.js --disable-extensions",
 		"jest": "jest",
 		"mocha": "mocha",
-		"build": "vsce package"
+		"build": "vsce package",
+		"test-api": "ts-node ./src/api/search"
 	},
 	"devDependencies": {
 		"@types/cheerio": "^0.22.22",
@@ -131,6 +141,7 @@
 	"dependencies": {
 		"axios": "^0.20.0",
 		"cheerio": "^1.0.0-rc.12",
+		"iconv-lite": "^0.6.3",
 		"vue": "^3.0.1"
 	}
 }
