@@ -12,7 +12,9 @@ const instance = axios.create({
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36 FS',
     cookie: '',
     origin: 'tieba.baidu.com',
-    host: 'tieba.baidu.com'
+    host: 'tieba.baidu.com',
+    Connection: 'keep-alive',
+    'Cache-Control': 'no-cache'
   },
 })
 
@@ -25,14 +27,14 @@ instance.interceptors.response.use(res => {
   console.log('响应：', res)
   // 响应set-cookie
   if(res.headers['set-cookie']) {
-    console.log('setCookie: ', res.headers['set-cookie'])
-    const cookieList: string[] = res.headers['set-cookie']
-    let currentCookieObj = parseCookie(instance.defaults.headers.cookie)
-    cookieList.forEach(item => {
-      currentCookieObj = Object.assign(currentCookieObj, parseCookie(item))
-    })
-    const cookieStr = stringifyCookie(currentCookieObj)
-    setCookie(cookieStr)
+    console.log('response setCookie: ', res.headers['set-cookie'])
+    // const cookieList: string[] = res.headers['set-cookie']
+    // let currentCookieObj = parseCookie(instance.defaults.headers.cookie)
+    // cookieList.forEach(item => {
+    //   currentCookieObj = Object.assign(currentCookieObj, parseCookie(item))
+    // })
+    // const cookieStr = stringifyCookie(currentCookieObj)
+    // setCookie(cookieStr)
   }
   if(/static\/captcha\/tuxing\.html/.test(res.request.path)) {
     console.log('触发百度安全验证')

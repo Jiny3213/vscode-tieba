@@ -160,6 +160,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (cookie) {
         setCookie(cookie)
         vscode.window.showInformationMessage('设置cookie成功')
+        console.log('your cookies:', cookie)
       }
     })
   })
