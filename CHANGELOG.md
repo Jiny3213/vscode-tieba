@@ -6,8 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- 评论功能
-- 查看推荐贴
+- 查看首页推荐
+
+## [0.1.2] - 2023-8-17
+### Added
+- 修改侧边栏图标(issue#3)
+- 支持分页加载，之前只能加载第一页(issue#2)
+- 增加页面加载提示
+
+## [0.1.1] - 2023-4-27
+### Added
+- 增加搜索功能
 
 ## [0.1.0] - 2023-4-3
 首次发布
