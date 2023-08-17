@@ -2,6 +2,8 @@ import axios from './axios'
 import * as cheerio from 'cheerio'
 import * as fs from 'fs'
 import * as vscode from 'vscode';
+import { saveText } from '../utils/test';
+
 interface ThreadItem {
   title: string, // 帖子的标题
   href: string, // 帖子的链接
@@ -53,7 +55,7 @@ export interface PostItem {
 }
 
 // 获取一个帖子的内容
-export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1): Promise<PostItem[]> {
+export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1) {
   console.log('开始获取post')
   return axios.get(url, {
     params: {
@@ -64,10 +66,20 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
   }).then( async res => {
     console.log('post已返回')
     const html = res.data
+    // saveText(`${new Date().getTime()}.html`, html)
     const $ = cheerio.load(html)
    
     let postList: PostItem[] = []
     let forumId: string // 吧id
+    let totalPost = 0
+    let totalPage = 0
+    const pageMatch = html.match(/(\d+)<\/span>回复贴，共.*?(\d+)/)
+    if(pageMatch) {
+      totalPost = Number(pageMatch[1])
+      totalPage = Number(pageMatch[2])
+    } else {
+      console.error('找不到页码，无法分页')
+    }
     $('.l_post').each((index, item) => {
       // 去除广告
       if($(item).attr('ad-dom-img') === 'true') {
@@ -100,10 +112,11 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
       vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
       return []
     }
+
     console.log('postlist 处理完毕, 开始获取comment')
     // https://tieba.baidu.com/p/8313773571?pid=147133552225&cid=0#147133552225(搜索时的url)
     const tid = url.match(/p\/(\d*)/)![1]
-    const commentList = await getCommentList(tid, forumId!)
+    const commentList = await getCommentList(tid, forumId!, page)
     // 把评论塞到postlist
     if(Object.keys(commentList).length) {
       for(let [k, v] of Object.entries(commentList)) {
@@ -111,7 +124,11 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         targetPost!.commentList = v['comment_info']
       }
     }
-    return postList
+    return {
+      postList,
+      totalPost,
+      totalPage
+    }
   })
 }
 
@@ -145,14 +162,14 @@ interface UserItem {
   user_id: number // 用户id
 }
 // 获取一个帖子中的所有贴中评论
-export function getCommentList(tid: string, fid: string): Promise<CommentObj> {
+export function getCommentList(tid: string, fid: string, page: number = 1): Promise<CommentObj> {
   return axios.get('https://tieba.baidu.com/p/totalComment', {
     params: {
-      t: 1603354967850,
+      t: new Date().getTime(),
       tid: tid, // thread id
       fid: fid, // forum_id 论坛id 暂时只能在post列表中获取, 1363635
-      pn: 1,
-      'see_lz': 0
+      pn: page,
+      'see_lz': 0 // 只看楼主
     }
   }).then(res => {
     console.log('comment已返回')
@@ -162,6 +179,7 @@ export function getCommentList(tid: string, fid: string): Promise<CommentObj> {
     for(let item of Object.values(commentList)) {
       (item as CommentItem).comment_info.forEach(commentInfo => {
         commentInfo.username = userList[commentInfo.user_id].nickname
+        commentInfo.content = commentInfo.content.replace(/<a.*?>(.*?)<\/a>/, '<span>$1<span>') // 去除回复用户高亮
       })
     }
     console.log('comment处理完毕')

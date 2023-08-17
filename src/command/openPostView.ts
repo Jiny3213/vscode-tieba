@@ -20,8 +20,9 @@ export function openPostView(context: vscode.ExtensionContext) {
         console.log('sayHello in openPostView')
         return Promise.resolve('had call sayHello')
       },
-      getPostList(message) {
-        return getPostList(thread.href)
+      getPostList(payload) {
+        const { data: { page } } = payload
+        return getPostList(thread.href, page)
       }
     }
 

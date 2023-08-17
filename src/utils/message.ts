@@ -13,15 +13,12 @@ const vscode = acquireVsCodeApi()
 // 发送消息
 function callVscode(cmd: string, data?: any): Promise<any> {
   const cbid = Date.now() + '' +  Math.round(Math.random() * 100000)
-  console.log(cbid)
   let webviewMessage:WebviewMessage = {
     cmd: cmd,
-    cbid: cbid
+    cbid: cbid,
+    data
   }
 
-  if(data) {
-    webviewMessage.data = data
-  }
   let resolveData: Function
   const promise = new Promise(resolve => {
     resolveData = resolve
@@ -48,6 +45,6 @@ window.addEventListener('message', event => {
   }
 })
 
-callVscode('sayHello').then(res => {
-  console.log('sayHellow in message', res)
-})
+// callVscode('sayHello').then(res => {
+//   console.log('sayHellow in message', res)
+// })

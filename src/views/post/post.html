@@ -9,6 +9,7 @@
 </head>
 <body>
   <div id="app">
+    <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
     <div v-if="postList.length">
       <div class="post-item" v-for="item in postList" :key="item.pid">
         <div>author: {{item.author}}</div>
@@ -25,20 +26,43 @@
         </div>
       </div>
     </div>
-    
+    <div v-else>加载中...</div>
+    <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
+
+    <div v-if="totalPage > 1">
+      <a class="pagenation-item" href="#" @click="fetch(page - 1)" v-if="page - 1 > 0"><<</a>
+      <template v-for="index of totalPage">
+        <span v-if="page === index" class="pagenation-item">{{ index }}</span>
+        <a v-else class="pagenation-item" href="#" @click="fetch(index)">{{ index }}</a>
+      </template>
+      <a class="pagenation-item" href="#" @click="fetch(page + 1)" v-if="page + 1 <= totalPage">>></a>
+    </div>
   </div>
   <script>
     const app = {
       data() {
         return {
           url: '',
-          postList: []
+          postList: [],
+          page: 1,
+          totalPage: 0,
+          totalPost: 0
+        }
+      },
+      methods: {
+        fetch(page = 1) {
+          this.page = page
+          this.postList = []
+          return callVscode('getPostList', { page: this.page }).then(res => {
+            const { postList, totalPost, totalPage } = res
+            this.postList = postList
+            this.totalPost = totalPost
+            this.totalPage = totalPage
+          })
         }
       },
       async created() {
-        await callVscode('getPostList').then(res => {
-          this.postList = res
-        })
+        await this.fetch()
         document.title = this.postList[0].text
       }
     }
@@ -61,6 +85,9 @@
     /* 评论中的表情 */
     img {
       opacity: 0.3;
+    }
+    .pagenation-item {
+      margin: 0 10px;
     }
   </style>
 </body>

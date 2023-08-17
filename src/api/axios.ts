@@ -37,7 +37,7 @@ instance.interceptors.response.use(res => {
     // setCookie(cookieStr)
   }
   if(/static\/captcha\/tuxing\.html/.test(res.request.path)) {
-    console.log('触发百度安全验证')
+    console.error('触发百度安全验证')
     vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
   }
   return res
