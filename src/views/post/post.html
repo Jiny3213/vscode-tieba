@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div v-else>加载中...</div>
+    <div v-else>{{ emptyMessage }}</div>
     <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
 
     <div v-if="totalPage > 1">
@@ -42,7 +42,7 @@
     const app = {
       data() {
         return {
-          url: '',
+          emptyMessage: '加载中...',
           postList: [],
           page: 1,
           totalPage: 0,
@@ -54,6 +54,10 @@
           this.page = page
           this.postList = []
           return callVscode('getPostList', { page: this.page }).then(res => {
+            if(res.errMessage) {
+              this.emptyMessage = res.errMessage
+              return
+            }
             const { postList, totalPost, totalPage } = res
             this.postList = postList
             this.totalPost = totalPost

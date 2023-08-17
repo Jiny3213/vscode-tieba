@@ -68,7 +68,10 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
     const html = res.data
     // saveText(`${new Date().getTime()}.html`, html)
     const $ = cheerio.load(html)
-   
+    if($('title').text() === '百度安全验证') {
+      vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
+      return { errMessage: '触发百度安全验证，请打开浏览器验证，并重新获取cookie' }
+    }
     let postList: PostItem[] = []
     let forumId: string // 吧id
     let totalPost = 0
@@ -108,10 +111,6 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         pid
       })
     })
-    if($('title').text() === '百度安全验证' || !postList.length) {
-      vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
-      return []
-    }
 
     console.log('postlist 处理完毕, 开始获取comment')
     // https://tieba.baidu.com/p/8313773571?pid=147133552225&cid=0#147133552225(搜索时的url)
