@@ -1,98 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title></title>
   <script src="../../../lib/vue.global.js"></script>
   <script src="../../../out/utils/message.js"></script>
 </head>
 <body>
-  <div id="app">
-    <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
+<div id="app">
+  <div v-bind:style="{color: fontColor}">
+    <div v-if="postList.length">
+      {{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页
+    </div>
     <div v-if="postList.length">
       <div class="post-item" v-for="item in postList" :key="item.pid">
-        <div>author: {{item.author}}</div>
-        <div>{{item.text}}</div>
+        <div>author: {{ item.author }}</div>
+        <div>{{ item.text }}</div>
         <div v-if="item.imageList.length">
-          <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src">
+          <img
+            class="post-img"
+            v-for="(src, index) in item.imageList"
+            :key="index"
+            :src="src"
+          />
         </div>
         <div v-if="item.commentList && item.commentList.length">
           <div>评论:</div>
-          <div v-for="comment in item.commentList" :key="comment['comment_id']">
-            <span>{{comment.username}}: </span>
+          <div
+            v-for="comment in item.commentList"
+            :key="comment['comment_id']"
+          >
+            <span>{{ comment.username }}: </span>
             <span v-html="comment.content"></span>
           </div>
         </div>
       </div>
     </div>
     <div v-else>{{ emptyMessage }}</div>
-    <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
+    <div v-if="postList.length">
+      {{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页
+    </div>
 
     <div v-if="totalPage > 1">
-      <a class="pagenation-item" href="#" @click="fetch(page - 1)" v-if="page - 1 > 0"><<</a>
+      <a
+        class="pagenation-item"
+        href="#"
+        @click="fetch(page - 1)"
+        v-if="page - 1 > 0"
+      ><<</a
+      >
       <template v-for="index of totalPage">
-        <span v-if="page === index" class="pagenation-item">{{ index }}</span>
-        <a v-else class="pagenation-item" href="#" @click="fetch(index)">{{ index }}</a>
+            <span v-if="page === index" class="pagenation-item"
+            >{{ index }}</span
+            >
+        <a v-else class="pagenation-item" href="#" @click="fetch(index)"
+        >{{ index }}</a
+        >
       </template>
-      <a class="pagenation-item" href="#" @click="fetch(page + 1)" v-if="page + 1 <= totalPage">>></a>
+      <a
+        class="pagenation-item"
+        href="#"
+        @click="fetch(page + 1)"
+        v-if="page + 1 <= totalPage"
+      >>></a
+      >
     </div>
   </div>
-  <script>
-    const app = {
-      data() {
-        return {
-          emptyMessage: '加载中...',
-          postList: [],
-          page: 1,
-          totalPage: 0,
-          totalPost: 0
-        }
-      },
-      methods: {
-        fetch(page = 1) {
-          this.page = page
-          this.postList = []
-          return callVscode('getPostList', { page: this.page }).then(res => {
-            if(res.errMessage) {
-              this.emptyMessage = res.errMessage
-              return
+</div>
+<script>
+  const app = {
+    data() {
+      return {
+        emptyMessage: "加载中...",
+        postList: [],
+        page: 1,
+        totalPage: 0,
+        totalPost: 0,
+        fontColor: "#d4d4d4",
+      };
+    },
+    methods: {
+      fetch(page = 1) {
+        this.page = page;
+        this.postList = [];
+        callVscode("getFontColor").then((res) => {
+          console.log(`fontColor: ${res}`);
+          this.fontColor = res;
+        });
+        return callVscode("getPostList", {page: this.page}).then(
+          (res) => {
+            if (res.errMessage) {
+              this.emptyMessage = res.errMessage;
+              return;
             }
-            const { postList, totalPost, totalPage } = res
-            this.postList = postList
-            this.totalPost = totalPost
-            this.totalPage = totalPage
-          })
-        }
+            const {postList, totalPost, totalPage} = res;
+            this.postList = postList;
+            this.totalPost = totalPost;
+            this.totalPage = totalPage;
+          }
+        );
       },
-      async created() {
-        await this.fetch()
-        document.title = this.postList[0].text
-      }
-    }
-    Vue.createApp(app).mount('#app')
-  </script>
-  <style>
+    },
+    async created() {
+      await this.fetch();
+      document.title = this.postList[0].text;
+    },
+  };
+  Vue.createApp(app).mount("#app");
+</script>
+<style>
     body {
-      color: #d4d4d4;
-      line-height: 2em;
+        line-height: 2em;
     }
+
     .post-item {
-      padding: 20px 0;
-      border-bottom: 1px solid #eeeeee;
+        padding: 20px 0;
+        border-bottom: 1px solid #eeeeee;
     }
+
     .post-img {
-      max-width: 200px;
-      opacity: 0.3;
-      margin-right: 20px;
+        max-width: 200px;
+        opacity: 0.3;
+        margin-right: 20px;
     }
+
     /* 评论中的表情 */
     img {
-      opacity: 0.3;
+        opacity: 0.3;
     }
+
     .pagenation-item {
-      margin: 0 10px;
+        margin: 0 10px;
     }
-  </style>
+</style>
 </body>
 </html>
