@@ -131,10 +131,15 @@ export function getPostList(
       const tid = url.match(/p\/(\d*)/)![1];
       const commentList = await getCommentList(tid, forumId!, page);
       // 把评论塞到postlist
-      if (Object.keys(commentList).length) {
-        for (let [k, v] of Object.entries(commentList)) {
-          let targetPost = postList.find((item) => item.pid === k);
-          targetPost!.commentList = v["comment_info"];
+      // if (Object.keys(commentList).length) {
+      //   for (let [k, v] of Object.entries(commentList)) {
+      //     let targetPost = postList.find((item) => item.pid === k);
+      //     targetPost!.commentList = v["comment_info"];
+      //   }
+      // }
+      for (let item of postList) {
+        if (commentList[Number(item.pid)]) {
+          item.commentList = commentList[Number(item.pid)]['comment_info'];
         }
       }
       return {
