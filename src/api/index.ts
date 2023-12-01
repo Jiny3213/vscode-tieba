@@ -90,10 +90,15 @@ export function getPostList(
       let forumId: string; // 吧id
       let totalPost = 0;
       let totalPage = 0;
+      let currentPage = page;
       const pageMatch = html.match(/(\d+)<\/span>回复贴，共.*?(\d+)/);
       if (pageMatch) {
         totalPost = Number(pageMatch[1]);
         totalPage = Number(pageMatch[2]);
+        const currentPageMatch = html.match(/<span class="tP">(\d+)<\/span>/);
+        if (currentPageMatch) {
+          currentPage = Number(currentPageMatch[1]);
+        }
       } else {
         console.error("找不到页码，无法分页");
       }
@@ -139,13 +144,14 @@ export function getPostList(
       // }
       for (let item of postList) {
         if (commentList[Number(item.pid)]) {
-          item.commentList = commentList[Number(item.pid)]['comment_info'];
+          item.commentList = commentList[Number(item.pid)]["comment_info"];
         }
       }
       return {
         postList,
         totalPost,
         totalPage,
+        currentPage,
       };
     });
 }

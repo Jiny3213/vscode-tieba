@@ -46,7 +46,7 @@
       <a
         class="pagenation-item"
         href="#"
-        @click="fetch(page - 1)"
+        @click="fetch(page - 1, false)"
         v-if="page - 1 > 0"
       ><<</a
       >
@@ -54,14 +54,18 @@
             <span v-if="page === index" class="pagenation-item"
             >{{ index }}</span
             >
-        <a v-else class="pagenation-item" href="#" @click="fetch(index)"
+        <a
+          v-else
+          class="pagenation-item"
+          href="#"
+          @click="fetch(index, false)"
         >{{ index }}</a
         >
       </template>
       <a
         class="pagenation-item"
         href="#"
-        @click="fetch(page + 1)"
+        @click="fetch(page + 1, false)"
         v-if="page + 1 <= totalPage"
       >>></a
       >
@@ -81,23 +85,25 @@
       };
     },
     methods: {
-      fetch(page = 1) {
+      fetch(page = 1, init = true) {
         this.page = page;
         this.postList = [];
         callVscode("getFontColor").then((res) => {
           console.log(`fontColor: ${res}`);
           this.fontColor = res;
         });
-        return callVscode("getPostList", {page: this.page}).then(
+        return callVscode("getPostList", {page: this.page, init}).then(
           (res) => {
+            console.log(res, "resres");
             if (res.errMessage) {
               this.emptyMessage = res.errMessage;
               return;
             }
-            const {postList, totalPost, totalPage} = res;
+            const {postList, totalPost, totalPage, currentPage} = res;
             this.postList = postList;
             this.totalPost = totalPost;
             this.totalPage = totalPage;
+            this.page = currentPage;
           }
         );
       },

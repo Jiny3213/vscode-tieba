@@ -24,9 +24,12 @@ export function openPostView(context: vscode.ExtensionContext) {
         },
         getPostList(payload) {
           const {
-            data: {page},
+            data: {page, init},
           } = payload;
-          return getPostList(thread.href, page);
+          return getPostList(
+            init ? thread.href : thread.href.match(/^[^?]+/)![0],
+            page
+          );
         },
         getFontColor() {
           return getFontColor();
