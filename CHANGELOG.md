@@ -8,6 +8,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - 查看首页推荐
 
+## [0.1.3] - 2024-7-3
+### Added
+- 增加帖子、回复时间显示
+- 优化帖子展示
+
 ## [0.1.2] - 2023-8-17
 ### Added
 - 修改侧边栏图标(issue#3)

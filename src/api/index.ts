@@ -51,7 +51,8 @@ export interface PostItem {
   author: string, // 作者
   pid: string, // postid, 用于对应评论
   imageList: string[], // 图片列表
-  commentList?: any[] // 评论
+  commentList?: any[], // 评论
+  field: any
 }
 
 // 获取一个帖子的内容
@@ -104,11 +105,13 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
           imageList.push($(item).attr('src')!)
         })
       }
+      const field = $(item).data('field') || {}
       postList.push({
         text,
         author,
         imageList,
-        pid
+        pid,
+        field
       })
     })
 
@@ -123,6 +126,7 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         targetPost!.commentList = v['comment_info']
       }
     }
+    console.log('最终的postList', postList)
     return {
       postList,
       totalPost,

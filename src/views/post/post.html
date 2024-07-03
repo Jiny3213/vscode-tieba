@@ -4,15 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
+  <script src="../../../lib/dayjs.min.js"></script>
   <script src="../../../lib/vue.global.js"></script>
   <script src="../../../out/utils/message.js"></script>
 </head>
 <body>
   <div id="app">
     <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
+
     <div v-if="postList.length">
       <div class="post-item" v-for="item in postList" :key="item.pid">
-        <div>author: {{item.author}}</div>
+        <div>{{item.author}} {{item.field?.content?.date}}</div>
         <div>{{item.text}}</div>
         <div v-if="item.imageList.length">
           <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src">
@@ -20,13 +22,14 @@
         <div v-if="item.commentList && item.commentList.length">
           <div>评论:</div>
           <div v-for="comment in item.commentList" :key="comment['comment_id']">
-            <span>{{comment.username}}: </span>
-            <span v-html="comment.content"></span>
+            <div>{{comment.username}} {{dayjs(comment.now_time * 1000).format('YYYY-MM-DD HH:mm:ss')}}</div>
+            <div v-html="comment.content"></div>
           </div>
         </div>
       </div>
     </div>
     <div v-else>{{ emptyMessage }}</div>
+
     <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
 
     <div v-if="totalPage > 1">
@@ -46,10 +49,17 @@
           postList: [],
           page: 1,
           totalPage: 0,
-          totalPost: 0
+          totalPost: 0,
+          // vscode darkmode 默认颜色，照顾到一些用户使用dark或者Light模式，为了自动适应，不对文字颜色进行调整
+          // color: {
+          //   blue1: '#9DDCFE', // 1=浅蓝色
+          //   blue2: '#4FC1FF',
+          //   blue3: '#569CD6', // 3=深蓝色
+          // }
         }
       },
       methods: {
+        dayjs,
         fetch(page = 1) {
           this.page = page
           this.postList = []
@@ -79,7 +89,7 @@
     }
     .post-item {
       padding: 20px 0;
-      border-bottom: 1px solid #eeeeee;
+      border-bottom: 1px solid #88888888;
     }
     .post-img {
       max-width: 200px;
