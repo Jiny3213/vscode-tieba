@@ -2,6 +2,7 @@
 参考博客 http://blog.haoji.me/vscode-plugin-overview.html
 参考文档 https://code.visualstudio.com/api/references/vscode-api
 
+本地开发，按F5
 安装打包工具 `npm i vsce -g`
 本地打包 `vsce package`
 
