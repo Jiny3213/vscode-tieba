@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - 查看首页推荐
 
+## [0.1.4] - 2024-9-11
+### Added
+- 新增大图模式：点击图片进入大图模式，图片将以原图大小展示在左上角，再次点击页面退出大图模式
+
 ## [0.1.3] - 2024-7-3
 ### Added
 - 增加帖子、回复时间显示

@@ -23,6 +23,10 @@ export function openPostView(context: vscode.ExtensionContext) {
       getPostList(payload) {
         const { data: { page } } = payload
         return getPostList(thread.href, page)
+      },
+      log(message) {
+        console.log(message)
+        return Promise.resolve(message)
       }
     }
 

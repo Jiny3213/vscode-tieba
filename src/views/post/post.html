@@ -17,7 +17,7 @@
         <div>{{item.author}} {{item.field?.content?.date}}</div>
         <div>{{item.text}}</div>
         <div v-if="item.imageList.length">
-          <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src">
+          <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src" @click="onClickImage(src)" title="点击进入大图模式">
         </div>
         <div v-if="item.commentList && item.commentList.length">
           <div>评论:</div>
@@ -29,6 +29,10 @@
       </div>
     </div>
     <div v-else>{{ emptyMessage }}</div>
+
+    <div class="preview" v-if="!!previewSrc" @click="closePreview" title="再次点击退出大图模式">
+      <img :src="previewSrc">
+    </div>
 
     <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
 
@@ -50,6 +54,7 @@
           page: 1,
           totalPage: 0,
           totalPost: 0,
+          previewSrc: ''
           // vscode darkmode 默认颜色，照顾到一些用户使用dark或者Light模式，为了自动适应，不对文字颜色进行调整
           // color: {
           //   blue1: '#9DDCFE', // 1=浅蓝色
@@ -73,6 +78,13 @@
             this.totalPost = totalPost
             this.totalPage = totalPage
           })
+        },
+        onClickImage(src) {
+          callVscode('log', src)
+          this.previewSrc = src
+        },
+        closePreview() {
+          this.previewSrc = ''
         }
       },
       async created() {
@@ -91,17 +103,32 @@
       padding: 20px 0;
       border-bottom: 1px solid #88888888;
     }
+    /* 评论中的表情 */
+    .post-item img {
+      opacity: 0.3;
+    }
     .post-img {
       max-width: 200px;
-      opacity: 0.3;
       margin-right: 20px;
+      cursor: pointer;
     }
-    /* 评论中的表情 */
-    img {
-      opacity: 0.3;
-    }
+    
     .pagenation-item {
       margin: 0 10px;
+    }
+
+    /* 查看大图 */
+    .preview {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      cursor: pointer;
+    }
+    .preview img {
+      object-fit: contain;
     }
   </style>
 </body>
