@@ -30,7 +30,7 @@
     </div>
     <div v-else>{{ emptyMessage }}</div>
 
-    <div class="preview" v-if="!!previewSrc" @click="closePreview" title="再次点击退出大图模式">
+    <div class="preview" v-if="!!previewSrc" @click="closePreview">
       <img :src="previewSrc">
     </div>
 

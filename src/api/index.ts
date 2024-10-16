@@ -7,7 +7,6 @@ import { saveText } from '../utils/test';
 interface ThreadItem {
   title: string, // 帖子的标题
   href: string, // 帖子的链接
-  images: Array<string> // 帖子的图
 }
 
 // 获取某个吧的帖子
@@ -30,15 +29,11 @@ export function getThreadList(keyword: string = '高达模型'):Promise<ThreadIt
     let threadList: ThreadItem[] = []
     $('.j_thread_list').each(function (index, item) {
       const title = $(item).find('a.j_th_tit')
-      threadList.push({
-        title: title.text(),
-        href: 'https://tieba.baidu.com' + title.attr('href')!,
-        images: []
-      })
-      const images = $(item).find('.threadlist_media img')
-      if(images.length) {
-        images.each(function(imgIndex:number, item) {
-          threadList[index].images.push($(item).attr('bpic')!)
+      const hasVideo = $(item).find('.threadlist_video').length > 0 // 视频贴
+      if(!hasVideo) { // 屏蔽视频贴
+        threadList.push({
+          title: title.text(),
+          href: 'https://tieba.baidu.com' + title.attr('href')!,
         })
       }
     })

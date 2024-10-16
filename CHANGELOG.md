@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - 查看首页推荐
 
+## [0.1.5] - 2024-10-16
+### Added
+- 屏蔽视频贴，现在帖子列表不会出现视频贴
+
 ## [0.1.4] - 2024-9-11
 ### Added
 - 新增大图模式：点击图片进入大图模式，图片将以原图大小展示在左上角，再次点击页面退出大图模式
