@@ -37,6 +37,13 @@ export function getThreadList(keyword: string = '高达模型'):Promise<ThreadIt
         })
       }
     })
+    // threadList.unshift({
+    //   title: '2张图片测试',
+    //   href: 'https://tieba.baidu.com/p/9359311158'
+    // })
+    // 贴吧表情示例
+    // https://tb2.bdstatic.com/tb/editor/images/face/i_f33.png?t=20140803
+    // https://gsp0.baidu.com/5aAHeD3nKhI2p27j8IqW0jdnxx1xbK/tb/editor/images/client/image_emoticon16.png
     return threadList
   })
 }
@@ -47,7 +54,8 @@ export interface PostItem {
   pid: string, // postid, 用于对应评论
   imageList: string[], // 图片列表
   commentList?: any[], // 评论
-  field: any
+  field: any,
+  date: string
 }
 
 // 获取一个帖子的内容
@@ -68,6 +76,11 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
       vscode.window.showErrorMessage('触发百度安全验证，请打开浏览器验证，并重新获取cookie')
       return { errMessage: '触发百度安全验证，请打开浏览器验证，并重新获取cookie' }
     }
+    if($('body').hasClass('page404')) {
+      vscode.window.showErrorMessage('此贴已被删除')
+      return { errMessage: '此贴已被删除' }
+    }
+
     let postList: PostItem[] = []
     let forumId: string // 吧id
     let totalPost = 0
@@ -101,12 +114,22 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
         })
       }
       const field = $(item).data('field') || {}
+      // 获取楼的发布时间
+      let date = ''
+      const tailInfos = $(item).find('span.tail-info')
+      tailInfos.each((index, element) => {
+        const text = $(element).text();
+        if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(text)) {
+          date = text
+        }
+      })
       postList.push({
         text,
         author,
         imageList,
         pid,
-        field
+        field,
+        date
       })
     })
 
@@ -118,7 +141,14 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
     if(Object.keys(commentList).length) {
       for(let [k, v] of Object.entries(commentList)) {
         let targetPost = postList.find(item => item.pid === k)
-        targetPost!.commentList = v['comment_info']
+        if(targetPost) {
+          // 修改评论内容，用户名加[]
+          const commentList = v['comment_info'].map((comment: any) => {
+            comment.content = comment.content.replace(/<span>(.*?)<span>/g, (_: any, match: string) => '<span>[' + match + ']<span>')
+            return comment
+          })
+          targetPost.commentList = commentList
+        }
       }
     }
     console.log('最终的postList', postList)

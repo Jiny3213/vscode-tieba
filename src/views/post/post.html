@@ -14,16 +14,33 @@
 
     <div v-if="postList.length">
       <div class="post-item" v-for="item in postList" :key="item.pid">
-        <div>{{item.author}} {{item.field?.content?.date}}</div>
-        <div>{{item.text}}</div>
-        <div v-if="item.imageList.length">
-          <img class="post-img" v-for="(src, index) in item.imageList" :key="index" :src="src" @click="onClickImage(src)" title="点击进入大图模式">
+        <div>[{{item.author}}] <span :style="{opacity: 0.5}">{{item.date}}</span></div>
+        <div>
+          {{item.text}}
+          <template v-for="(src, index) in item.imageList.filter(src => /editor\/images\//.test(src))">
+            <img 
+              v-if="/editor\/images\//.test(src)"
+              :key="index" 
+              :src="src"
+              alt="贴吧表情"
+              >
+          </template>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
+            <img 
+              v-for="(src, index) in item.imageList.filter(src => !/editor\/images\//.test(src))"
+              :key="index" 
+              class="common-img"
+              :src="src" 
+              alt="普通图片"
+              @click="onClickImage(src)" 
+              title="点击进入大图模式">
+          </div>
         </div>
         <div v-if="item.commentList && item.commentList.length">
-          <div>评论:</div>
+          <div :style="{marginTop: '1em'}">评论:</div>
           <div v-for="comment in item.commentList" :key="comment['comment_id']">
-            <div>{{comment.username}} {{dayjs(comment.now_time * 1000).format('YYYY-MM-DD HH:mm:ss')}}</div>
-            <div v-html="comment.content"></div>
+            <div>[{{comment.username}}] <span :style="{opacity: 0.5}">{{dayjs(comment.now_time * 1000).format('YYYY-MM-DD HH:mm:ss')}}</span></div>
+            <div v-html="comment.content" :style="{textIndent: '2em'}"></div>
           </div>
         </div>
       </div>
@@ -98,18 +115,25 @@
     body {
       color: #d4d4d4;
       line-height: 2em;
+      vertical-align: middle;
     }
     .post-item {
       padding: 20px 0;
       border-bottom: 1px solid #88888888;
     }
-    /* 评论中的表情 */
+    /* 表情或普通图片 */
     .post-item img {
       opacity: 0.3;
+      vertical-align: middle;
+      height: 2em; 
+      width: 2em;
     }
-    .post-img {
+  
+    /* 非表情的普通图片 */
+    .post-item .common-img {
+      height: auto; 
+      width: auto;
       max-width: 200px;
-      margin-right: 20px;
       cursor: pointer;
     }
     
