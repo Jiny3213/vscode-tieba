@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - 查看首页推荐
 
+## [0.1.7] - 2024-12-26
+### Added
+- 屏蔽新型广告
+
 ## [0.1.6] - 2024-12-25
 ### Added
 - 增加已删帖提示，避免删帖内容一直显示加载中

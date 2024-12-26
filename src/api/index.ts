@@ -38,8 +38,8 @@ export function getThreadList(keyword: string = '高达模型'):Promise<ThreadIt
       }
     })
     // threadList.unshift({
-    //   title: '2张图片测试',
-    //   href: 'https://tieba.baidu.com/p/9359311158'
+    //   title: '测试',
+    //   href: 'https://tieba.baidu.com/p/9360597616'
     // })
     // 贴吧表情示例
     // https://tb2.bdstatic.com/tb/editor/images/face/i_f33.png?t=20140803
@@ -95,6 +95,12 @@ export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562'
     $('.l_post').each((index, item) => {
       // 去除广告
       if($(item).attr('ad-dom-img') === 'true') {
+        console.log('发现广告')
+        return
+      }
+      // 新型广告
+      if($(item).attr('data-field') === '{}') {
+        console.log('发现新型广告')
         return
       }
 
