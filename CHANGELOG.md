@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - 查看首页推荐
 
+## [0.1.8] - 2026-03-18
+### Added
+- 增加「只看楼主」按钮，支持在帖子详情中筛选只看楼主的回复 ([#14](https://github.com/Jiny3213/vscode-tieba/pull/14))
+
 ## [0.1.7] - 2024-12-26
 ### Added
 - 屏蔽新型广告
