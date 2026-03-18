@@ -21,8 +21,8 @@ export function openPostView(context: vscode.ExtensionContext) {
         return Promise.resolve('had call sayHello')
       },
       getPostList(payload) {
-        const { data: { page } } = payload
-        return getPostList(thread.href, page)
+        const { data: { page, seeLz } } = payload
+        return getPostList(thread.href, page, seeLz)
       },
       log(message) {
         console.log(message)
