@@ -59,13 +59,14 @@ export interface PostItem {
 }
 
 // 获取一个帖子的内容
-export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1) {
+export function getPostList(url: string = 'https://tieba.baidu.com/p/7029367562', page: number = 1, seeLz: boolean = false) {
   console.log('开始获取post')
   return axios.get(url, {
     params: {
       pn: page, // 第一页: 1
       ajax: 1,
-      t: new Date().getTime()
+      t: new Date().getTime(),
+      see_lz: seeLz ? 1 : 0
     }
   }).then( async res => {
     console.log('post已返回')

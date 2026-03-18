@@ -10,7 +10,12 @@
 </head>
 <body>
   <div id="app">
-    <div v-if="postList.length">{{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页</div>
+    <div v-if="postList.length">
+      {{ totalPost }}回复贴，共{{ totalPage }}页，当前第{{ page }}页
+      <a @click="toggleSeeLz()" href="#">
+        <span v-if="seeLz">取消</span>只看楼主
+      </a>
+    </div>
 
     <div v-if="postList.length">
       <div class="post-item" v-for="item in postList" :key="item.pid">
@@ -71,7 +76,8 @@
           page: 1,
           totalPage: 0,
           totalPost: 0,
-          previewSrc: ''
+          previewSrc: '',
+          seeLz: false
           // vscode darkmode 默认颜色，照顾到一些用户使用dark或者Light模式，为了自动适应，不对文字颜色进行调整
           // color: {
           //   blue1: '#9DDCFE', // 1=浅蓝色
@@ -85,7 +91,7 @@
         fetch(page = 1) {
           this.page = page
           this.postList = []
-          return callVscode('getPostList', { page: this.page }).then(res => {
+          return callVscode('getPostList', { page: this.page, seeLz: this.seeLz }).then(res => {
             if(res.errMessage) {
               this.emptyMessage = res.errMessage
               return
@@ -95,6 +101,10 @@
             this.totalPost = totalPost
             this.totalPage = totalPage
           })
+        },
+        toggleSeeLz() {
+          this.seeLz = !this.seeLz
+          this.fetch(1)
         },
         onClickImage(src) {
           callVscode('log', src)
